@@ -1,4 +1,5 @@
 var idProductoActual = -1;//producto visualizado para la reseña
+var confirmacion=1;
 
 (function($) {
 	"use strict"
@@ -314,6 +315,7 @@ function cargaVistaProducto(id){//Se cargara al linkar en Categoria (pag ppal) l
                 
                 $('#calificacion').html('');
                 $('#calificacion').html(codigo);
+                $('#prod-rating').html(codigo);
                 
                 
                 $('#lineaProgreso1').width((sumas[0]*100/suma)+'%');
@@ -332,6 +334,8 @@ function cargaVistaProducto(id){//Se cargara al linkar en Categoria (pag ppal) l
                 
                 
                 $('.Reseñas').html(listaResenas);//Aplicamos el codigo listaResenas a la etiqueta html de la clase css Reseñas
+                
+                
                 paginarResena(1);//para que pagine los comentarios de 4 en 4, 1 porque soon las primeras cuatro
             },
             
@@ -408,15 +412,95 @@ function anadir(pedido,articulo){
             var carrito=JSON.parse(data);
                 $('#carritocant').html(carrito.length);
                 console.log(data);
+                location.reload();
+            },
+        error: function (data){
             
+        }
+    });
+}
+
+function comprar(pedido, idUsuario){
+    if($('#terms').is(':checked')==false){
+        return;
+    }
+    
+    $.ajax({//Ajax para que la pagina no se recargue al hacer clic en las imagenes del carrusel
+            type: 'post',//metodo
+            url: 'Gestor.php',//Llamamos a esta direccion
+            data: {//parametros post que se envian al enlace.
+            accion: 'comprar',  
+                idpedido:pedido,
+                idUsuario:parseInt(idUsuario) //<----Añadir el usuario
+            },
+            
+           
+            success: function(data){
+            console.log(data);
+                
+                location="checkout.php?compra=1";
+            },
+        error: function (data){
+            
+        }
+    });
+}
+function quitar(idProducto, idPedido){
+ 
+    $('#quitarpedido').modal({show:true});
+    $("#quitarpedido").on('hidden.bs.modal', function(){
+    if(confirmacion==0){
+    $.ajax({//Ajax para que la pagina no se recargue al hacer clic en las imagenes del carrusel
+            type: 'post',//metodo
+            url: 'Gestor.php',//Llamamos a esta direccion
+            data: {//parametros post que se envian al enlace.
+            accion: 'quitar',  
+                idPedido:idPedido,
+                idProducto:idProducto //<----Añadir el usuario
+            },
+            
+           
+            success: function(data){
+            console.log(data);
+                confirmacion=1;
+                location.reload();
             },
         error: function (data){
             
         }
     });
     
-    function refreshPage() {
-        location.reload(true);
+     } 
+    });
+}
+
+    
+function suscribirse(){
+    var email=document.getElementById('mailnewsletter').value;
+    if(email!=""){
+    $.ajax({//Ajax para que la pagina no se recargue al hacer clic en las imagenes del carrusel
+            type: 'post',//metodo
+            url: 'Gestor.php',//Llamamos a esta direccion
+            data: {//parametros post que se envian al enlace.
+            accion: 'suscribirse',  
+                email:email
+            },
+            
+           
+            success: function(data){
+            console.log(data);
+
+                $('#newslettermod').modal({show:true});
+            },
+        error: function (data){
+            
+        }
+    });
     }
 }
+
+function confirmarquitar(){
+    confirmacion=0;
+}
+
 

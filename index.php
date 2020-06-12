@@ -3,15 +3,14 @@ session_start();
 require_once("php/daos/ProductoDaoImpl.php");
 require_once("php/clases/Producto.php");
 require_once("php/daos/CategoriaDaoImpl.php");
-require_once("php/daos/ListaDeseosDaoImpl.php");
 require_once("php/clases/Usuario.php");
+require_once("php/clases/Categoria.php");
 if(isset($_SESSION['usuario'])){
 $usuarioActual=unserialize($_SESSION['usuario']);
     }
 $gestorProductos=new ProductoDaoImpl();
 $gestorCategorias=new CategoriaDaoImpl();
-$gestorListaDeseos=new ListaDeseosDaoImpl();
-    $lista=$gestorListaDeseos->findByIdUsuario(1);//Cambiar por usuario cuando tengamos sesion
+
 ?>
 
 
@@ -122,13 +121,16 @@ function vibrar() {
 						<div class="col-md-6">
 							<div class="header-search">
 								<form>
-									<select class="input-select">
-										<option value="0">Todas las categorias</option>
-										<option value="1">Ordenadores</option>
-										<option value="1">Tablets</option>
+									<select class="input-select" onchange="location= this.value" >
+									    <option value="">------------</option>
+										<option value="index.php">Todas las categorias</option>
+										<option value="product.php?categoria=1">Laptops</option>
+										<option value="product.php?categoria=2">Smartphones</option>
+										<option value="product.php?categoria=3">Cámaras</option>
+										<option value="product.php?categoria=4">Accesorios</option>
 									</select>
-									<input class="input" placeholder="Buscar aquí">
-									<button class="search-btn">Buscar</button>
+									
+									<button class="search-btn" disabled>Buscar</button>
 								</form>
 							</div>
 						</div>
@@ -138,13 +140,7 @@ function vibrar() {
 						<div class="col-md-3 clearfix">
 							<div class="header-ctn">
 								<!-- Wishlist -->
-								<div>
-									<a href="listadeseos.php">
-										<i class="fa fa-heart-o"></i>
-										<span>Lista deseos</span>
-										<div class="qty"><?=count($lista)?></div>
-									</a>
-								</div>
+								
 								<!-- /Wishlist -->
 
 								<!-- Cart -->
@@ -258,7 +254,7 @@ function vibrar() {
 					<!-- section title -->
 					<div class="col-md-12">
 						<div class="section-title">
-							<h3 class="title">Productos nuevos</h3>
+							<h3 class="title">Nuestros productos</h3>
 							<div class="section-nav">
 								<ul class="section-tab-nav tab-nav">
 								    <?php 
@@ -292,7 +288,7 @@ function vibrar() {
 										
 										foreach($productos as $p){
 										
-										$nombreCategoria=$gestorCategorias->findById($p->get_IdProducto())->get_Nombre();
+										$nombreCategoria=$gestorCategorias->findById($p->get_IdCategoria())->get_nombre();
 										$precioRebajado=$p->get_precioRebajado();
                                         $precioNormal=$p->get_precioNormal();
                                         $descuento=(1-($precioRebajado/$precioNormal))*100;
@@ -302,7 +298,7 @@ function vibrar() {
 												<img src="./img/<?=$p->get_foto()?>" alt="">
 												<div class="product-label">
 													<span class="sale">-<?=number_format($descuento,0)?>%</span>
-													<span class="new">Nuevo</span>
+													
 												</div>
 											</div>
 											<div class="product-body">
@@ -388,60 +384,11 @@ function vibrar() {
 				<div class="row">
 
 					<!-- section title -->
-					<div class="col-md-12">
-						<div class="section-title">
-							<h3 class="title">Lo más vendido</h3>
-							<div class="section-nav">
-								<ul class="section-tab-nav tab-nav">
-									<?php 
-                                    $categorias=$gestorCategorias->findAll();
-                                    $clase="active";
-                                    foreach($categorias as $c){
-                                        
-                                        ?>
-<!--                                        <li><a class=<?=$clase?> data-toggle="tab" href="#tab1"><?=$c->get_Nombre()?></a></li>-->
-                                        <?php
-                                            $clase="";
-                                    }
-                                    ?>
-								</ul>
-							</div>
-						</div>
-					</div>
+					
 					<!-- /section title -->
 
 					<!-- Products tab & slick -->
-					<div class="col-md-12">
-						<div class="row">
-							<div class="products-tabs">
-								<!-- tab -->
-								<div id="tab2" class="tab-pane fade in active">
-									<div class="products-slick" data-nav="#slick-nav-2">
-										<!-- product -->
-										<div class="product">
-											<div class="product-img">
-												<img src="./img/product06.png" alt="">
-												<div class="product-label">
-													<span class="sale">-30%</span>
-													<span class="new">NUEVO</span>
-												</div>
-											</div>
-											<div class="product-body">
-												<p class="product-Category">Categoría</p>
-												<h3 class="product-name"><a href="#">ordenador portatil</a></h3>
-												<h4 class="product-price">980.00€ <del class="product-old-price">990.00€</del></h4>
-												
-											</div>
-										</div>
-										<!-- /product -->
-
-									</div>
-									<div id="slick-nav-2" class="products-slick-nav"></div>
-								</div>
-								<!-- /tab -->
-							</div>
-						</div>
-					</div>
+					
 					<!-- /Products tab & slick -->
 				</div>
 				<!-- /row -->
@@ -462,10 +409,28 @@ function vibrar() {
 					<div class="col-md-12">
 						<div class="newsletter">
 							<p>Inscríbete <strong>NEWSLETTER</strong></p>
-							<form>
-								<input class="input" type="email" placeholder="Email">
-								<button class="newsletter-btn"><i class="fa fa-envelope"></i> Suscribirse</button>
-							</form>
+                                
+								<input class="input" type="email" placeholder="Email" id="mailnewsletter">
+								<button class="newsletter-btn" onclick="suscribirse()"><i class="fa fa-envelope"></i> Suscribirse</button>
+                           
+							<div class="modal fade" id="newslettermod" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Newsletter</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                Te has suscrito correctamente
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
 							<ul class="newsletter-follow">
 								<li>
 									<a href="http://facebook.com" target="_blank"><i class="fa fa-facebook"></i></a>
@@ -502,14 +467,25 @@ function vibrar() {
 								<h3 class="footer-title">Sobre nosotros</h3>
 								<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut.</p>
 								<ul class="footer-links">
-									<li><a href="#"><i class="fa fa-map-marker"></i>Paseo de la Habana 342</a></li>
-									<li><a href="#"><i class="fa fa-phone"></i>900 12 12 12 </a></li>
+									<li><a href="#"><i class="fa fa-map-marker"></i>Paseo de la Habana 234</a></li>
+									<li><a href="#"><i class="fa fa-phone"></i>900 12 12 12</a></li>
 									<li><a href="#"><i class="fa fa-envelope-o"></i>info@electro.com</a></li>
 								</ul>
 							</div>
 						</div>
 
-						
+						<div class="col-md-3 col-xs-6">
+							<div class="footer">
+								<h3 class="footer-title">Categorías</h3>
+								<ul class="footer-links">
+									<li><a href="#">Ofertas</a></li>
+									<li><a href="#">Laptops</a></li>
+									<li><a href="#">Smartphones</a></li>
+									<li><a href="#">Cámaras</a></li>
+									<li><a href="#">Accesorios</a></li>
+								</ul>
+							</div>
+						</div>
 
 						<div class="clearfix visible-xs"></div>
 
@@ -518,9 +494,9 @@ function vibrar() {
 								<h3 class="footer-title">Información</h3>
 								<ul class="footer-links">
 									<li><a href="#">Sobre nosotros</a></li>
-									<li><a href="#">Contactar</a></li>
+									<li><a href="#">Contacto</a></li>
 									<li><a href="#">Política de privacidad</a></li>
-									<li><a href="#">Pedidos y devoluciones</a></li>
+									<li><a href="#">Envíos y devoluciones</a></li>
 									<li><a href="#">Terminos y condiciones</a></li>
 								</ul>
 							</div>
@@ -533,7 +509,7 @@ function vibrar() {
 									<li><a href="#">Mi cuenta</a></li>
 									<li><a href="#">Ver carrito</a></li>
 									<li><a href="#">Lista de deseos</a></li>
-									<li><a href="#">Localizar pedido</a></li>
+									<li><a href="#">Localizar envío</a></li>
 									<li><a href="#">Ayuda</a></li>
 								</ul>
 							</div>
@@ -551,18 +527,11 @@ function vibrar() {
 					<!-- row -->
 					<div class="row">
 						<div class="col-md-12 text-center">
-							<ul class="footer-payments">
-								<li><a href="#"><i class="fa fa-cc-visa"></i></a></li>
-								<li><a href="#"><i class="fa fa-credit-card"></i></a></li>
-								<li><a href="#"><i class="fa fa-cc-paypal"></i></a></li>
-								<li><a href="#"><i class="fa fa-cc-mastercard"></i></a></li>
-								<li><a href="#"><i class="fa fa-cc-discover"></i></a></li>
-								<li><a href="#"><i class="fa fa-cc-amex"></i></a></li>
-							</ul>
+							
 							<span class="copyright">
 								<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-								Copyright &copy;<script>document.write(new Date().getFullYear());</script> 2019, Electra S.A. Todos los derechos reservados<a href="https://colorlib.com" target="_blank"></a>
-							
+								Copyright &copy;<script>document.write(new Date().getFullYear());</script> Electro S.L. Todos los derechos reservados<a href="https://colorlib.com" target="_blank">Colorlib</a>
+							<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 							</span>
 						</div>
 					</div>

@@ -103,13 +103,16 @@ $usuarioActual=unserialize($_SESSION['usuario']);
 						<div class="col-md-6">
 							<div class="header-search">
 								<form>
-									<select class="input-select">
-										<option value="0">Categorías</option>
-										<option value="1">Ordenadores</option>
-										<option value="1">Tablets</option>
+									<select class="input-select" onchange="location= this.value" >
+									    <option value="">------------</option>
+										<option value="index.php">Todas las categorias</option>
+										<option value="product.php?categoria=1">Laptops</option>
+										<option value="product.php?categoria=2">Smartphones</option>
+										<option value="product.php?categoria=3">Cámaras</option>
+										<option value="product.php?categoria=4">Accesorios</option>
 									</select>
-									<input class="input" placeholder="Buscar aquí">
-									<button class="search-btn">Buscar</button>
+									
+									<button class="search-btn" disabled>Buscar</button>
 								</form>
 							</div>
 						</div>
@@ -144,7 +147,7 @@ $usuarioActual=unserialize($_SESSION['usuario']);
 						
 						<li><a href="checkout.php">Pedido</a></li>
 						
-					</ul>
+					</ul>   
 					<!-- /NAV -->
 				</div>
 				<!-- /responsive-nav -->
@@ -174,31 +177,31 @@ $usuarioActual=unserialize($_SESSION['usuario']);
 							</div>
 							<form action="Gestor.php" method='post'>
 							<div class="form-group">
-								<input class="input" type="text" name="nombre" placeholder="Nombre">
+								<input class="input" type="text" name="nombre" placeholder="Nombre" required>
 							</div>
 							<div class="form-group">
-								<input class="input" type="text" name="apellido" placeholder="Apellidos">
+								<input class="input" type="text" name="apellido" placeholder="Apellidos" required>
 							</div>
 							<div class="form-group">
-								<input class="input" type="email" name="email" placeholder="Email">
+								<input class="input" type="email" name="email" placeholder="Email" required="true">
 							</div>
 							<div class="form-group">
-								<input class="input" type="password" name="password" placeholder="Contraseña">
+								<input class="input" type="password" name="password" placeholder="Contraseña" required="true">
 							</div>
 							<div class="form-group">
-								<input class="input" type="text" name="direccion" placeholder="Dirección">
+								<input class="input" type="text" name="direccion" placeholder="Dirección" required>
 							</div>
 							<div class="form-group">
-								<input class="input" type="text" name="ciudad" placeholder="Ciudad">
+								<input class="input" type="text" name="ciudad" placeholder="Ciudad" required>
 							</div>
 							<div class="form-group">
-								<input class="input" type="text" name="pais" placeholder="País">
+								<input class="input" type="text" name="pais" placeholder="País" required>
 							</div>
 							<div class="form-group">
-								<input class="input" type="text" name="codigoPostal" placeholder="Código Postal">
+								<input class="input" type="text" name="codigoPostal" placeholder="Código Postal" required>
 							</div>
 							<div class="form-group">
-								<input class="input" type="tel" name="telefono" placeholder="Teléfono">
+								<input class="input" type="tel" name="telefono" placeholder="Teléfono" required>
 							</div>
 							<input type="hidden" name="accion" value="registro">
 							<input class="btn btn-danger" type="submit" value="Enviar">
@@ -223,14 +226,14 @@ $usuarioActual=unserialize($_SESSION['usuario']);
                                <input type="hidden" name="accion" value="login">
 							<input class="btn btn-danger" type="submit" value="Enviar">
                                 </form>
-                                <p><?php
-                                    
-                                    if(isset($_GET['error'])){
+                                <p>
+                                   
+                                   <?php if(isset($_GET['error'])){ ?>
                                         
-                                        echo "Usuario o contraseña incorrectos";
-                                    }
-                                    
-                                    ?></p>
+                                    <div class="alert alert-danger" role="alert">
+                                    Usuario o contraseña incorrectos
+                                    </div>
+                                    <?php } ?></p>
 							</div>
 						</div>
 						<!-- /Billing Details -->
@@ -256,11 +259,29 @@ $usuarioActual=unserialize($_SESSION['usuario']);
 				<div class="row">
 					<div class="col-md-12">
 						<div class="newsletter">
-							<p>Inscríbase a la <strong>NEWSLETTER</strong></p>
-							<form>
-								<input class="input" type="email" placeholder="Email">
-								<button class="newsletter-btn"><i class="fa fa-envelope"></i> Suscribirse</button>
-							</form>
+							<p>Inscríbete <strong>NEWSLETTER</strong></p>
+                                
+								<input class="input" type="email" placeholder="Email" id="mailnewsletter">
+								<button class="newsletter-btn" onclick="suscribirse()"><i class="fa fa-envelope"></i> Suscribirse</button>
+                           
+							<div class="modal fade" id="newslettermod" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Newsletter</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                Te has suscrito correctamente
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
 							<ul class="newsletter-follow">
 								<li>
 									<a href="http://facebook.com" target="_blank"><i class="fa fa-facebook"></i></a>
@@ -367,7 +388,7 @@ $usuarioActual=unserialize($_SESSION['usuario']);
 							</ul>
 							<span class="copyright">
 								<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-								Copyright &copy;<script>document.write(new Date().getFullYear());</script> 2019 Electro S.A. Todos los derechos reservados <a href="https://colorlib.com" target="_blank">Colorlib</a>
+								Copyright &copy;<script>document.write(new Date().getFullYear());</script> Electro S.A. Todos los derechos reservados <a href="https://colorlib.com" target="_blank">Colorlib</a>
 							<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 							</span>
 						</div>

@@ -50,7 +50,7 @@ $gestorProductos=new ProductoDaoImpl();
         <link rel="icon" href=img/logo.ico>
         
     </head>
-	<body>
+	<body <?php if(isset($_GET['compra'])){ echo "onload=\"$('#compraRealizada').modal({show:true});\""; } ?>>
 		<!-- HEADER -->
 		<header>
 			<!-- TOP HEADER -->
@@ -105,13 +105,16 @@ $gestorProductos=new ProductoDaoImpl();
 						<div class="col-md-6">
 							<div class="header-search">
 								<form>
-									<select class="input-select">
-										<option value="0">Categorías</option>
-										<option value="1">Ordenadores</option>
-										<option value="1">Tablets</option>
+									<select class="input-select" onchange="location= this.value" >
+									    <option value="">------------</option>
+										<option value="index.php">Todas las categorias</option>
+										<option value="product.php?categoria=1">Laptops</option>
+										<option value="product.php?categoria=2">Smartphones</option>
+										<option value="product.php?categoria=3">Cámaras</option>
+										<option value="product.php?categoria=4">Accesorios</option>
 									</select>
-									<input class="input" placeholder="Buscar aquí">
-									<button class="search-btn">Buscar</button>
+									
+									<button class="search-btn" disabled>Buscar</button>
 								</form>
 							</div>
 						</div>
@@ -121,13 +124,7 @@ $gestorProductos=new ProductoDaoImpl();
 						<div class="col-md-3 clearfix">
 							<div class="header-ctn">
 								<!-- Wishlist -->
-								<div>
-									<a href="listadeseos.php">
-										<i class="fa fa-heart-o"></i>
-										<span>Tu lista de deseos</span>
-										<div class="qty">0</div>
-									</a>
-								</div>
+								
 								<!-- /Wishlist -->
 
 								<!-- Cart -->
@@ -208,94 +205,82 @@ $gestorProductos=new ProductoDaoImpl();
 						<!-- Billing Details -->
 						<div class="billing-details">
 							<div class="section-title">
-								<h3 class="title">Dirección de facturación</h3>
+								<h3 class="title">Dirección de Envio</h3>
 							</div>
 							<div class="form-group">
-								<input class="input" type="text" name="first-name" placeholder="Nombre">
+								<input class="input" type="text" name="first-name" placeholder="Nombre" 
+                                        <?php 
+                                           if(isset($_SESSION['usuario'])){
+                                            echo " value=\"".$usuarioActual->get_nombre()."\""; 
+                                           }
+                                        ?>
+                                           >
 							</div>
 							<div class="form-group">
-								<input class="input" type="text" name="last-name" placeholder="Apellidos">
+								<input class="input" type="text" name="last-name" placeholder="Apellidos" 
+                                        <?php 
+                                           if(isset($_SESSION['usuario'])){
+                                            echo " value=\"".$usuarioActual->get_apellido()."\""; 
+                                           }
+                                        ?>
+                                           >
 							</div>
 							<div class="form-group">
-								<input class="input" type="email" name="email" placeholder="Email">
+								<input class="input" type="email" name="email" placeholder="Email" 
+                                        <?php 
+                                           if(isset($_SESSION['usuario'])){
+                                            echo " value=\"".$usuarioActual->get_email()."\""; 
+                                           }
+                                        ?>
+                                           >
 							</div>
 							<div class="form-group">
-								<input class="input" type="text" name="address" placeholder="Dirección">
+								<input class="input" type="text" name="address" placeholder="Dirección"
+                                        <?php 
+                                           if(isset($_SESSION['usuario'])){
+                                            echo " value=\"".$usuarioActual->get_direccion()."\""; 
+                                           }
+                                        ?>
+                                           >
 							</div>
 							<div class="form-group">
-								<input class="input" type="text" name="city" placeholder="Ciudad">
+								<input class="input" type="text" name="city" placeholder="Ciudad"
+                                        <?php 
+                                           if(isset($_SESSION['usuario'])){
+                                            echo " value=\"".$usuarioActual->get_ciudad()."\""; 
+                                           }
+                                        ?>
+                                           >
 							</div>
 							<div class="form-group">
-								<input class="input" type="text" name="country" placeholder="País">
+								<input class="input" type="text" name="country" placeholder="País" 
+                                        <?php 
+                                           if(isset($_SESSION['usuario'])){
+                                            echo " value=\"".$usuarioActual->get_pais()."\""; 
+                                           }
+                                        ?>
+                                           >
 							</div>
 							<div class="form-group">
-								<input class="input" type="text" name="zip-code" placeholder="Código Postal">
+								<input class="input" type="text" name="zip-code" placeholder="Código Postal" 
+                                        <?php 
+                                           if(isset($_SESSION['usuario'])){
+                                            echo " value=\"".$usuarioActual->get_codigoPostal()."\""; 
+                                           }
+                                        ?>
+                                           >
 							</div>
 							<div class="form-group">
-								<input class="input" type="tel" name="tel" placeholder="Teléfono">
-							</div>
-							<div class="form-group">
-								<div class="input-checkbox">
-									<input type="checkbox" id="create-account">
-									<label for="create-account">
-										<span></span>
-										¿Quieres crear una cuenta?
-									</label>
-									<div class="caption">
-										<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt.</p>
-										<input class="input" type="password" name="password" placeholder="Introduzca su contraseña">
-									</div>
-								</div>
+								<input class="input" type="tel" name="tel" placeholder="Teléfono"
+                                        <?php 
+                                           if(isset($_SESSION['usuario'])){
+                                            echo " value=\"".$usuarioActual->get_telefono()."\""; 
+                                           }
+                                        ?>
+                                           >
 							</div>
 						</div>
 						<!-- /Billing Details -->
-
-						<!-- Shiping Details -->
-						<div class="shiping-details">
-							<div class="section-title">
-								<h3 class="title">Dirección de envío</h3>
-							</div>
-							<div class="input-checkbox">
-								<input type="checkbox" id="shiping-address">
-								<label for="shiping-address">
-									<span></span>
-									¿Dirección diferente a la de facturación?
-								</label>
-								<div class="caption">
-									<div class="form-group">
-										<input class="input" type="text" name="first-name" placeholder="Nombre">
-									</div>
-									<div class="form-group">
-										<input class="input" type="text" name="last-name" placeholder="Apellidos">
-									</div>
-									<div class="form-group">
-										<input class="input" type="email" name="email" placeholder="Email">
-									</div>
-									<div class="form-group">
-										<input class="input" type="text" name="address" placeholder="Dirección">
-									</div>
-									<div class="form-group">
-										<input class="input" type="text" name="city" placeholder="Ciudad">
-									</div>
-									<div class="form-group">
-										<input class="input" type="text" name="country" placeholder="País">
-									</div>
-									<div class="form-group">
-										<input class="input" type="text" name="zip-code" placeholder="Código Postal">
-									</div>
-									<div class="form-group">
-										<input class="input" type="tel" name="tel" placeholder="Teléfono">
-									</div>
-								</div>
-							</div>
-						</div>
-						<!-- /Shiping Details -->
-
-						<!-- Order notes -->
-						<div class="order-notes">
-							<textarea class="input" placeholder="Aclaraciones para el envío"></textarea>
-						</div>
-						<!-- /Order notes -->
 					</div>
 
 					<!-- Order Details -->
@@ -307,6 +292,7 @@ $gestorProductos=new ProductoDaoImpl();
 							<div class="order-col">
 								<div><strong>PRODUCTO</strong></div>
 								<div><strong>TOTAL</strong></div>
+								<div><Strong>QUITAR</Strong></div>
 							</div>
 							<?php 
                             if(isset($_SESSION['usuario'])){
@@ -321,41 +307,32 @@ $gestorProductos=new ProductoDaoImpl();
 							</div>
 							<div class="order-col">
 								<div><strong>TOTAL</strong></div>
-								<div><strong class="order-total">€2940.00</strong></div>
+								<div><strong class="order-total">€<?php
+                                    if(isset($_SESSION['usuario'])){
+                                    echo $gestorProductos->calcularTotal($usuarioActual->get_idUsuario()); 
+                                    }
+                                        ?></strong></div>
 							</div>
 						</div>
-						<div class="payment-method">
-							<div class="input-radio">
-								<input type="radio" name="payment" id="payment-1">
-								<label for="payment-1">
-									<span></span>
-									Transferencia bancaria
-								</label>
-								<div class="caption">
-									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-								</div>
-							</div>
-							<div class="input-radio">
-								<input type="radio" name="payment" id="payment-2">
-								<label for="payment-2">
-									<span></span>
-									Cheque
-								</label>
-								<div class="caption">
-									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-								</div>
-							</div>
-							<div class="input-radio">
-								<input type="radio" name="payment" id="payment-3">
-								<label for="payment-3">
-									<span></span>
-									Paypal
-								</label>
-								<div class="caption">
-									<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-								</div>
-							</div>
-						</div>
+						<div class="modal" id="quitarpedido" tabindex="-1" role="dialog">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title">Eliminar este pedido</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                <p>¿Estás seguro de que quieres eliminar este pedido?</p>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" onclick="confirmarquitar();" data-dismiss="modal">Si</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
 						<div class="input-checkbox">
 							<input type="checkbox" id="terms">
 							<label for="terms">
@@ -363,7 +340,36 @@ $gestorProductos=new ProductoDaoImpl();
 								Acepto los terminos y condiciones
 							</label>
 						</div>
-						<a href="#" class="primary-btn order-submit">Comprar</a>
+						<?php if(isset($_SESSION['usuario'])){ ?>
+						<a href="#" class="primary-btn order-submit" <?php 
+                                            if(isset($_SESSION['usuario'])){
+                                            $num = $gestorProductos->calcularCarrito($usuarioActual->get_idUsuario());
+                                                if($num!=0){
+                                                     echo 'onclick="comprar('.$gestorProductos->obtenerPedido($usuarioActual->get_idUsuario()).','.$usuarioActual->get_idUsuario().');"';
+                                                }
+                                            }
+                                           
+                        ?>
+                        >Comprar</a>
+						<?php } ?>
+						<div class="modal fade" id="compraRealizada" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Compra efectuada</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                Su pedido llegará a su domicilio en un periodo inferior a 7 días
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
 					</div>
 					<!-- /Order Details -->
 				</div>
@@ -381,11 +387,29 @@ $gestorProductos=new ProductoDaoImpl();
 				<div class="row">
 					<div class="col-md-12">
 						<div class="newsletter">
-							<p>Inscríbase a la <strong>NEWSLETTER</strong></p>
-							<form>
-								<input class="input" type="email" placeholder="Email">
-								<button class="newsletter-btn"><i class="fa fa-envelope"></i> Suscribirse</button>
-							</form>
+							<p>Inscríbete <strong>NEWSLETTER</strong></p>
+                                
+								<input class="input" type="email" placeholder="Email" id="mailnewsletter">
+								<button class="newsletter-btn" onclick="suscribirse()"><i class="fa fa-envelope"></i> Suscribirse</button>
+                           
+							<div class="modal fade" id="newslettermod" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Newsletter</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                Te has suscrito correctamente
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
 							<ul class="newsletter-follow">
 								<li>
 									<a href="http://facebook.com" target="_blank"><i class="fa fa-facebook"></i></a>
@@ -492,7 +516,7 @@ $gestorProductos=new ProductoDaoImpl();
 							</ul>
 							<span class="copyright">
 								<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-								Copyright &copy;<script>document.write(new Date().getFullYear());</script> 2019 Electro S.A. Todos los derechos reservados <a href="https://colorlib.com" target="_blank">Colorlib</a>
+								Copyright &copy;<script>document.write(new Date().getFullYear());</script> Electro S.A. Todos los derechos reservados <a href="https://colorlib.com" target="_blank">Colorlib</a>
 							<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 							</span>
 						</div>

@@ -127,4 +127,16 @@ class UsuarioDaoImpl implements UsuarioDao{
         }
         return $usuario;
     }
+    public function suscribirse($email){
+            if(!$this->conexion==null){
+                    $stmt2 = $this->conexion->prepare("INSERT INTO emails VALUES (:email)");
+            
+                    $stmt2->bindParam(':email', $email); //Statement(Consulta preparada);
+
+                    // Especificamos el fetch mode antes de llamar a fetch()
+                    $stmt2->setFetchMode(PDO::FETCH_ASSOC);
+                    // Ejecutamos
+                    $stmt2->execute();
+            }
+    }
 }

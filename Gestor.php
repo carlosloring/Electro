@@ -27,6 +27,7 @@ if($accion=="obtenerProducto"){
     $resena = $gestorResena->findByIdProducto($idProducto);
     
     echo json_encode($resena);
+    
 }else if($accion=='enviarResena'){
     
     $puntuacion = $_POST['puntuacion'];
@@ -49,7 +50,8 @@ if($accion=="obtenerProducto"){
     
     $estado = $gestorResena->guardar($resena);
     echo $estado;
-}else if($accion=='obtenerListaDeseos'){
+    
+}else if($accion=='obtenerListaDeseos'){//No lo quitamos por residuos
     $idUsuario=$_POST["idUsuario"];
     $gestorListaDeseos=new ListaDeseosDaoImpl();
     $lista=$gestorListaDeseos->findByIdUsuario($idUsuario);
@@ -84,6 +86,7 @@ else if($accion=='login'){
         $gestorUsuarios->carritovacio($usuario->get_idUsuario());
         $_SESSION['carrito']=[];
         header('Location: index.php');
+        
     }else{
         
         header('Location: registro.php?error');
@@ -101,6 +104,26 @@ else if($accion=='anadir'){
     echo json_encode($_SESSION['carrito']);
 }
 
+else if($accion=='comprar'){
+    if(isset($_SESSION['usuario'])){
+    $gestorProductos=new ProductoDaoImpl();
+    $gestorProductos->comprar($_POST['idpedido']);
+    $gestorUsuarios = new UsuarioDaoImpl();
+    //INDICAR EL USUARIO EN EL PARENTESIS
+    $gestorUsuarios->carritoVacio($_POST['idUsuario']);
+}
+}
+else if($accion=='quitar'){
+    if(isset($_SESSION['usuario'])){
+        $gestorProductos=new ProductoDaoImpl();
+        $gestorProductos->quitar($_POST['idProducto'],$_POST['idPedido']);
+    }
+}
+else if($accion=='suscribirse'){
+        $gestorUsuarios=new UsuarioDaoImpl();
+        $gestorUsuarios->suscribirse($_POST['email']);
+}
+
 else if(isset($_GET['logout'])){
     
     unset($_SESSION['carrito']);
@@ -108,7 +131,8 @@ else if(isset($_GET['logout'])){
     header('Location: index.php');
 } 
 
-function actualizacarrito($carrito, $producto, $cantidad){
+
+function actualizacarrito($carrito, $producto, $cantidad){//No se usa
    
         
         $item['producto']=$producto;

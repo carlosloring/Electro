@@ -11,9 +11,9 @@ class Producto implements JsonSerializable{
     private $detalles;
     private $precioNormal;
     private $precioRebajado;
-    private $stock;
     private $foto;
     private $idCategoria;
+    private $stock;
     
  public function __construct ($row = null){
      
@@ -26,10 +26,9 @@ class Producto implements JsonSerializable{
         $this->detalles = $row["detalles"];
         $this->precioNormal = $row["precioNormal"];
         $this->precioRebajado = $row["precioRebajado"];
-        $this->stock = $row["stock"];
         $this->foto = $row["foto"];
         $this->idCategoria = $row["idCategoria"];
-
+         $this->stock = $row["stock"];
     }   
      
  }
@@ -56,7 +55,12 @@ class Producto implements JsonSerializable{
     public function set_descripcion($descripcion){
     $this->descripcion = $descripcion;
 }    
-    
+   public function get_stock(){
+    return $this->stock;
+}
+    public function set_stock($stock){
+    $this->stock = $stock;
+}   
     
     public function get_descripcionCorta(){
     return $this->descripcionCorta;
@@ -91,13 +95,6 @@ class Producto implements JsonSerializable{
     
     public function set_precioRebajado($precioRebajado){
     $this->precioRebajado = $precioRebajado;
-} 
-    public function get_stock(){
-    return $this->stock;
-}
-    
-    public function set_stock($stock){
-    $this->stock = $stock;
 } 
     
     public function get_foto(){

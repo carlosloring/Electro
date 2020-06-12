@@ -114,13 +114,16 @@ $productos=$gestorProductos->findByCategoria($categoria);
 						<div class="col-md-6">
 							<div class="header-search">
 								<form>
-									<select class="input-select">
-										<option value="0">Categorías</option>
-										<option value="1">Portátiles</option>
-										<option value="1">Tablets</option>
+									<select class="input-select" onchange="location= this.value" >
+									    <option value="">------------</option>
+										<option value="index.php">Todas las categorias</option>
+										<option value="product.php?categoria=1">Laptops</option>
+										<option value="product.php?categoria=2">Smartphones</option>
+										<option value="product.php?categoria=3">Cámaras</option>
+										<option value="product.php?categoria=4">Accesorios</option>
 									</select>
-									<input class="input" placeholder="Buscar aquí">
-									<button class="search-btn">Buscar</button>
+									
+									<button class="search-btn" disabled>Buscar</button>
 								</form>
 							</div>
 						</div>
@@ -130,13 +133,7 @@ $productos=$gestorProductos->findByCategoria($categoria);
 						<div class="col-md-3 clearfix">
 							<div class="header-ctn">
 								<!-- Wishlist -->
-								<div>
-									<a href="listadeseos.php">
-										<i class="fa fa-heart-o"></i>
-										<span>Tu lista de deseos</span>
-										<div class="qty">0</div>
-									</a>
-								</div>
+								
 								<!-- /Wishlist -->
 
 								<!-- Cart -->
@@ -260,7 +257,7 @@ $productos=$gestorProductos->findByCategoria($categoria);
 						<div class="product-Detalles">
 							<h2 class="product-name">portátil</h2>
 							<div>
-								<div class="product-rating">
+								<div class="product-rating" id="prod-rating">
 									<i class="fa fa-star"></i>
 									<i class="fa fa-star"></i>
 									<i class="fa fa-star"></i>
@@ -287,15 +284,11 @@ $productos=$gestorProductos->findByCategoria($categoria);
 										<span class="qty-down">-</span>
 									</div>
 								</div>
-								<button class="add-to-cart-btn" onclick="anadir(<?php echo $gestorProductos->obtenerPedido($usuarioActual->get_idUsuario());  ?>,<?php echo $categoria; ?>)"><i class="fa fa-shopping-cart"></i> añadir al carrito</button>
+								<button class="add-to-cart-btn" onclick="anadir(<?php echo $gestorProductos->obtenerPedido($usuarioActual->get_idUsuario());  ?>, <?php echo $productos[0]->get_idProducto(); ?>)"><i class="fa fa-shopping-cart"></i> añadir al carrito</button>
 								
 							</div>
                                
-                            <div style="margin:10px">
-                                <ul class="product-btns">
-                                    <li><a href="#"><i class="fa fa-heart-o"></i> añadir a la lista de deseos</a></li>
-                                </ul>
-                            </div>
+                            
 							<?php } ?>
 						</div>
 					</div>
@@ -495,71 +488,7 @@ $productos=$gestorProductos->findByCategoria($categoria);
 		<!-- /SECTION -->
 
 		<!-- Section -->
-		<div class="section">
-			<!-- container -->
-			<div class="container">
-				<!-- row -->
-				<div class="row">
 
-					<div class="col-md-12">
-						<div class="section-title text-center">
-							<h3 class="title">Productos relacionados</h3>
-						</div>
-					</div>
-
-
-					<!-- product -->
-					<div class="col-md-3 col-xs-6">
-						<div class="product">
-							<div class="product-img">
-								<img src="./img/product02.png" alt="">
-								<div class="product-label">
-									<span class="new">NEW</span>
-								</div>
-							</div>
-							<div class="product-body">
-								<p class="product-category">Categoría</p>
-								<h3 class="product-name"><a href="#">portátil</a></h3>
-								<h4 class="product-price">€980.00 <del class="product-old-price">€990.00</del></h4>
-							</div>
-							<div class="add-to-cart">
-								<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> añadir al carrito</button>
-							</div>
-						</div>
-					</div>
-					<!-- /product -->
-
-					<div class="clearfix visible-sm visible-xs"></div>
-
-					<!-- product -->
-					<div class="col-md-3 col-xs-6">
-						<div class="product">
-							<div class="product-img">
-								<img src="./img/product03.png" alt="">
-								<div class="product-label">
-									<span class="sale">30%</span>
-								</div>
-							</div>
-							<div class="product-body">
-								<p class="product-category">Categoría</p>
-								<h3 class="product-name"><a href="#">portátil</a></h3>
-								<h4 class="product-price">€980.00 <del class="product-old-price">€990.00</del></h4>
-								
-							</div>
-							<div class="add-to-cart">
-								<button class="add-to-cart-btn"><i class="fa fa-shopping-cart"></i> añadir al carrito</button>
-							</div>
-						</div>
-					</div>
-					<!-- /product -->
-
-					
-
-				</div>
-				<!-- /row -->
-			</div>
-			<!-- /container -->
-		</div>
 		<!-- /Section -->
 
 		<!-- NEWSLETTER -->
@@ -570,11 +499,29 @@ $productos=$gestorProductos->findByCategoria($categoria);
 				<div class="row">
 					<div class="col-md-12">
 						<div class="newsletter">
-							<p>Inscríbete a nuestra <strong>NEWSLETTER</strong></p>
-							<form>
-								<input class="input" type="email" placeholder="Email">
-								<button class="newsletter-btn"><i class="fa fa-envelope"></i> Suscribirse</button>
-							</form>
+							<p>Inscríbete <strong>NEWSLETTER</strong></p>
+                                
+								<input class="input" type="email" placeholder="Email" id="mailnewsletter">
+								<button class="newsletter-btn" onclick="suscribirse()"><i class="fa fa-envelope"></i> Suscribirse</button>
+                           
+							<div class="modal fade" id="newslettermod" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Newsletter</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                  <span aria-hidden="true">&times;</span>
+                                </button>
+                              </div>
+                              <div class="modal-body">
+                                Te has suscrito correctamente
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
 							<ul class="newsletter-follow">
 								<li>
 									<a href="http://facebook.com" target="_blank"><i class="fa fa-facebook"></i></a>
@@ -681,7 +628,7 @@ $productos=$gestorProductos->findByCategoria($categoria);
 							</ul>
 							<span class="copyright">
 								<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-								Copyright &copy;<script>document.write(new Date().getFullYear());</script> 2019 Electro S.L. Todos los derechos reservados<a href="https://colorlib.com" target="_blank">Colorlib</a>
+								Copyright &copy;<script>document.write(new Date().getFullYear());</script> Electro S.L. Todos los derechos reservados<a href="https://colorlib.com" target="_blank">Colorlib</a>
 							<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 							</span>
 						</div>

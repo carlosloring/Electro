@@ -82,7 +82,7 @@ class ProductoDaoImpl implements ProductoDao{
         
         if(!$this->conexion==null){
         // FETCH_ASSOC
-            $stmt = $this->conexion->prepare("SELECT p.idPedido, pp.cantidad, pr.nombre, pr.precioRebajado FROM pedido p INNER JOIN productosPedido pp ON p.idPedido = pp.idPedido INNER JOIN producto pr ON pp.idProducto = pr.idProducto WHERE p.estado=0 AND p.idUsuario = :idUsuario;");
+            $stmt = $this->conexion->prepare("SELECT p.idPedido, pp.cantidad, pr.nombre, pr.precioRebajado, pp.idProducto FROM pedido p INNER JOIN productosPedido pp ON p.idPedido = pp.idPedido INNER JOIN producto pr ON pp.idProducto = pr.idProducto WHERE p.estado=0 AND p.idUsuario = :idUsuario;");
             $stmt->bindParam(':idUsuario', $idUsuario); 
 
         // Especificamos el fetch mode antes de llamar a fetch()
@@ -93,7 +93,7 @@ class ProductoDaoImpl implements ProductoDao{
             $listapedidos="";
 
             while ($row = $stmt->fetch()){
-                $listapedidos=$listapedidos.'<div class="order-col"><div>'.$row['cantidad'].'x '.$row['nombre'].'</div><div>€'.($row['precioRebajado']*$row['cantidad']).'</div></div>';
+                $listapedidos=$listapedidos.'<div class="order-col"><div>'.$row['cantidad'].'x '.$row['nombre'].'</div><div>€'.($row['precioRebajado']*$row['cantidad']).'</div><div><a href="#" onclick="quitar('.$row['idProducto'].','.$row['idPedido'].')"><i class="fa fa-times"></i></a></div></div>';
 
             }
             return $listapedidos;
@@ -141,7 +141,7 @@ class ProductoDaoImpl implements ProductoDao{
         }
         return 0;
     }
-    public function anadirProducto($idPedido,$cantidad,$idProducto){
+    public function anadirProducto($idProducto,$cantidad,$idPedido){
         
         if(!$this->conexion==null){
             
@@ -157,5 +157,60 @@ class ProductoDaoImpl implements ProductoDao{
             
         }
         
+    }
+    public function calcularTotal($idUsuario){
+        
+        if(!$this->conexion==null){
+            
+            // FETCH_ASSOC
+            $stmt = $this->conexion->prepare("SELECT COALESCE(SUM(pr.precioRebajado * pp.cantidad),0) as Total FROM productosPedido pp INNER JOIN pedido p ON pp.idPedido = p.idPedido INNER JOIN producto pr ON pr.idProducto = pp.idProducto WHERE p.idUsuario = :idUsuario AND estado=0");//No tiene que coincidir con los nombres de la BD
+
+            $stmt->bindParam(':idUsuario', $idUsuario); //Statement(Consulta preparada).La preparamos para evitar inyeccion de codigo
+                                             
+            $resultado=$stmt->execute();
+            if ($row = $stmt->fetch()){
+                $stmt2 = $this->conexion->prepare("UPDATE pedido SET precioTotal=:total WHERE idUsuario =:idUsuario AND estado=0");//No tiene que coincidir con los nombres de la BD
+
+            $stmt2->bindParam(':idUsuario', $idUsuario); //Statement(Consulta preparada).La preparamos para evitar inyeccion de codigo
+            $stmt2->bindParam(':total', $row['Total']);
+                                             
+            $resultado2=$stmt2->execute();
+                return $row['Total'];
+                
+            }
+            
+        }
+        
+    }
+    public function comprar($idPedido){
+        
+        if(!$this->conexion==null){
+            
+            // FETCH_ASSOC
+            $stmt = $this->conexion->prepare("UPDATE pedido SET fechaPedido=NOW(),estado=1 WHERE idPedido =:idPedido");//No tiene que coincidir con los nombres de la BD
+
+            $stmt->bindParam(':idPedido', $idPedido); //Statement(Consulta preparada).La preparamos para evitar inyeccion de codigo
+            
+                                             
+            $resultado=$stmt->execute();
+            return $resultado;
+            
+        }
+        
+    }
+    
+    public function quitar($idProducto,$idPedido){
+        if(!$this->conexion==null){
+            
+            // FETCH_ASSOC
+            $stmt = $this->conexion->prepare("DELETE FROM productosPedido WHERE idProducto=:idProducto AND idPedido=:idPedido");//No tiene que coincidir con los nombres de la BD
+
+            $stmt->bindParam(':idProducto', $idProducto); //Statement(Consulta preparada).La preparamos para evitar inyeccion de codigo
+            $stmt->bindParam(':idPedido', $idPedido);
+                                             
+            $resultado=$stmt->execute();
+            return $resultado;
+            
+        }
     }
 }
